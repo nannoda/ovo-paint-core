@@ -1,14 +1,5 @@
 export function workerFunction() {
     console.log("Worker.ts");
-    //
-    // if (!onmessage) {
-    //     throw new Error("Worker.ts: onmessage is undefined.");
-    // }
-    //
-    //
-    // onmessage((event: MessageEvent) => {
-    //     console.log("Worker.ts got message: " + event.data);
-    // });
 
     self.onmessage = (event: MessageEvent) => {
         console.log("Worker.ts got message: ");
