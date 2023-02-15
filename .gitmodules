@@ -1,0 +1,3 @@
+[submodule "src/submodules/common-ts-utils"]
+path = src/submodules/common-ts-utils
+url = https://github.com/NaNnoda/common-ts-utils.git
