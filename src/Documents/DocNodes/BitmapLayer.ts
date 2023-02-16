@@ -1,50 +1,100 @@
+import {createWorkerFromFunction} from "../../submodules/common-ts-utils/WebWorker/CreateWorker";
 import {AbstractDocNode} from "./AbstractDocNode";
 
-export class BitmapLayer extends AbstractDocNode {
-    protected _actionCanvas: OffscreenCanvas;
-    protected _actionCtx: OffscreenCanvasRenderingContext2D;
-    protected _actionStarted: boolean = false;
-    protected _lastRenderedImage: ImageBitmap;
+function layerWorkerCode() {
+    let canvas: OffscreenCanvas;
+    let ctx: OffscreenCanvasRenderingContext2D;
 
-    constructor(width: number, height: number, name: string) {
-        super(width, height, name);
-        this._actionCanvas = new OffscreenCanvas(width, height);
-        this._actionCtx = this._actionCanvas.getContext("2d") as OffscreenCanvasRenderingContext2D;
-        this._lastRenderedImage = this.renderCanvas.transferToImageBitmap();
+    function drawDot(pos: Vec2) {
+
+        ctx.fillStyle = "#000000";
+        ctx.beginPath();
+        ctx.arc(pos[0], pos[1], 5, 0, 2 * Math.PI);
+        ctx.fill();
+        console.log("drawDot")
     }
 
-    get actionCanvas(): OffscreenCanvas {
-        if (this._actionStarted)
-            return this._renderCanvas;
-        throw new Error("Action not started");
-    }
+    //
+    // function updateBitmap(){
+    //     let bitmap = canvas.transferToImageBitmap();
+    //     self.postMessage({
+    //         key: "updateBitmap",
+    //         data: bitmap,
+    //     })
+    //     ctx.drawImage(bitmap, 0, 0)
+    // }
 
-    get actionCtx(): OffscreenCanvasRenderingContext2D {
-        if (this._actionStarted)
-            return this._renderCtx;
-        throw new Error("Action not started");
-    }
-
-    startAction(): void {
-        this._actionStarted = true;
-    }
-
-    flushAction(): void {
-        this._lastRenderedImage = this.renderCanvas.transferToImageBitmap();
-    }
-
-    endAction(): void {
-        this._actionStarted = false;
-        this.flushAction();
-        this.forceRender();
-    }
-
-    forceRender(): void {
-        const ctx = this._renderCtx;
-        ctx.clearRect(0, 0, this.width, this.height);
-        ctx.drawImage(this._lastRenderedImage, 0, 0);
-        if (this._actionStarted) {
-            ctx.drawImage(this._actionCanvas, 0, 0);
+    self.onmessage = (e) => {
+        let data = e.data as LayerWorkerEvent;
+        switch (data.key) {
+            case "setCanvas":
+                canvas = data.data as OffscreenCanvas;
+                console.log(canvas)
+                ctx = canvas.getContext("2d") as OffscreenCanvasRenderingContext2D;
+                break;
+            case "drawDot":
+                drawDot(data.data as Vec2)
+                break;
+            default:
+                console.log("Unknown event key: " + data.key);
         }
+    }
+}
+
+type layerEventKey = "setCanvas" | "drawDot"
+
+interface LayerWorkerEvent {
+    key: layerEventKey;
+    data: any;
+}
+
+
+export class BitmapLayer extends AbstractDocNode {
+    protected _worker: Worker;
+    protected _size: Vec2;
+    protected _offset: Vec2;
+    protected _content: CanvasImageSource;
+
+    postMessage(e: LayerWorkerEvent, transfer?: Transferable[]) {
+        if (transfer !== undefined) {
+            this._worker.postMessage(e, transfer);
+            return;
+        }
+        this._worker.postMessage(e, transfer);
+    }
+    constructor(size: Vec2, offset: Vec2 = [0, 0]) {
+        super(size, "BitmapLayer", offset);
+        this._size = size;
+        this._offset = offset;
+
+        this._worker = createWorkerFromFunction(layerWorkerCode);
+        this._content = document.createElement("canvas");
+        this._content.width = size[0];
+        this._content.height = size[1];
+
+        let canvas = this._content.transferControlToOffscreen();
+
+        this.postMessage(
+            {
+                key: "setCanvas",
+                data: canvas
+            }, [canvas]
+        );
+    }
+
+    drawDot(pos: Vec2) {
+        this.postMessage({
+            key: "drawDot",
+            data: pos
+        });
+    }
+
+
+    get height(): number {
+        return 0;
+    }
+
+    get width(): number {
+        return 0;
     }
 }

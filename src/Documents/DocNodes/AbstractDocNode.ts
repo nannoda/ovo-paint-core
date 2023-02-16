@@ -1,18 +1,14 @@
 export abstract class AbstractDocNode {
     private _name: string;
-    protected readonly _renderCanvas: OffscreenCanvas;
-
-    protected _renderCtx: OffscreenCanvasRenderingContext2D;
+    protected abstract _content: CanvasImageSource;
 
     isDirty: boolean = true;
 
     offset: Vec2;
 
-    protected constructor(width: number, height: number, name: string) {
+    protected constructor(size: Vec2, name: string = "Untitled", offset: Vec2 = [0, 0]) {
         this._name = name;
-        this._renderCanvas = new OffscreenCanvas(width, height);
-        this._renderCtx = this._renderCanvas.getContext("2d") as OffscreenCanvasRenderingContext2D;
-        this.offset = [0, 0];
+        this.offset = offset;
     }
 
     get name(): string {
@@ -24,11 +20,10 @@ export abstract class AbstractDocNode {
     }
 
     /**
-     * Get the canvas that represents the rendered content of this node.
-     * Usually this canvas shouldn't be modified directly.
+     * Get the image source that represents the rendered content of this node.
      */
-    get renderCanvas(): OffscreenCanvas {
-        return this._renderCanvas;
+    get content(): CanvasImageSource {
+        return this._content;
     }
 
     /**
@@ -49,11 +44,7 @@ export abstract class AbstractDocNode {
 
     }
 
-    get width(): number {
-        return this._renderCanvas.width;
-    }
+    abstract get width(): number ;
 
-    get height(): number {
-        return this._renderCanvas.height;
-    }
+    abstract get height(): number ;
 }

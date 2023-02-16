@@ -7,7 +7,7 @@ import {
     ToolUpdateEvent
 } from "./Documents/DocManager/DocManagerWorker";
 import {DotPen} from "./PaintTools/DotPen";
-import {WorkerLayer} from "./Documents/DocNodes/WorkerLayer";
+import {BitmapLayer} from "./Documents/DocNodes/BitmapLayer";
 
 console.log("Main.ts");
 
@@ -15,23 +15,25 @@ console.log("Main.ts");
 function main() {
     let htmlCanvas = document.getElementById("canvas") as HTMLCanvasElement;
 
-    let size:Vec2 = [2000, 2000];
-    let layer = new WorkerLayer(size);
+    let size:Vec2 = [3840, 2160];
+    let layer = new BitmapLayer(size);
     htmlCanvas.width = size[0];
     htmlCanvas.height = size[1];
+
 
     let ctx = htmlCanvas.getContext("2d") as CanvasRenderingContext2D;
 
     function frameUpdate() {
         ctx.clearRect(0, 0, htmlCanvas.width, htmlCanvas.height);
-        ctx.drawImage(layer.bitmap, 0, 0);
-        ctx.drawImage(layer.bitmap, 0, 0);
-        ctx.drawImage(layer.bitmap, 0, 0);
-        ctx.drawImage(layer.bitmap, 0, 0);
+        ctx.drawImage(layer.content, 0, 0);
+        ctx.drawImage(layer.content, 0, 0);
+        ctx.drawImage(layer.content, 0, 0);
+        ctx.drawImage(layer.content, 0, 0);
         requestAnimationFrame(frameUpdate);
     }
     frameUpdate();
     htmlCanvas.onpointermove = (event) => {
+        console.log( "pointermove")
         layer.drawDot([event.offsetX, event.offsetY]);
     }
 
