@@ -57,11 +57,16 @@ export class BitmapLayer extends AbstractDocNode {
 
     postMessage(e: LayerWorkerEvent, transfer?: Transferable[]) {
         if (transfer !== undefined) {
-            this._worker.postMessage(e, transfer);
+            (async () => {
+                this._worker.postMessage(e, transfer);
+            })()
             return;
         }
-        this._worker.postMessage(e, transfer);
+        (async () => {
+            this._worker.postMessage(e);
+        })()
     }
+
     constructor(size: Vec2, offset: Vec2 = [0, 0]) {
         super(size, "BitmapLayer", offset);
         this._size = size;

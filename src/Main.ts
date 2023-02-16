@@ -8,6 +8,7 @@ import {
 } from "./Documents/DocManager/DocManagerWorker";
 import {DotPen} from "./PaintTools/DotPen";
 import {BitmapLayer} from "./Documents/DocNodes/BitmapLayer";
+import {WorkerCanvas} from "./Documents/DocNodes/WorkerCanvas";
 
 console.log("Main.ts");
 
@@ -15,26 +16,51 @@ console.log("Main.ts");
 function main() {
     let htmlCanvas = document.getElementById("canvas") as HTMLCanvasElement;
 
-    let size:Vec2 = [3840, 2160];
+    let size:Vec2 = [4000, 4000];
     let layer = new BitmapLayer(size);
     htmlCanvas.width = size[0];
     htmlCanvas.height = size[1];
+
+    if( localStorage.getItem("USER_SIGNATURE") === null) {
+        console.log("Setting user signature");
+        let signature = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        localStorage.setItem("USER_SIGNATURE", signature);
+    }else{
+        console.log("User signature already set");
+        console.log(localStorage.getItem("USER_SIGNATURE"));
+    }
+    let signature = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    console.log(signature);
+    (self as any).test = {
+        "Test": "Test"
+    }
+    self.eval("console.log(test)");
+    (self as any).test = undefined;
+    self.eval("console.log(test)");
+
+    let workerCanvas = new WorkerCanvas(size[0], size[1]);
 
 
     let ctx = htmlCanvas.getContext("2d") as CanvasRenderingContext2D;
 
     function frameUpdate() {
         ctx.clearRect(0, 0, htmlCanvas.width, htmlCanvas.height);
-        ctx.drawImage(layer.content, 0, 0);
-        ctx.drawImage(layer.content, 0, 0);
-        ctx.drawImage(layer.content, 0, 0);
-        ctx.drawImage(layer.content, 0, 0);
+        // ctx.drawImage(layer.content, 0, 0);
+        ctx.drawImage(workerCanvas.content, 0, 0);
+        // ctx.drawImage(layer.content, 0, 0);
+        // ctx.drawImage(layer.content, 0, 0);
+        // ctx.drawImage(layer.content, 0, 0);
         requestAnimationFrame(frameUpdate);
     }
     frameUpdate();
     htmlCanvas.onpointermove = (event) => {
-        console.log( "pointermove")
-        layer.drawDot([event.offsetX, event.offsetY]);
+        // console.log( "pointermove")
+        workerCanvas.fillStyle = "#000000";
+        workerCanvas.beginPath();
+        workerCanvas.arc(event.offsetX, event.offsetY, 5, 0, 2 * Math.PI);
+
+        workerCanvas.fill();
+
     }
 
 
