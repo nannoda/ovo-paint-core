@@ -2,7 +2,7 @@
 import {PaintToolEvent} from "../../PaintToolEvent";
 import {PaintTool} from "../../PaintTools/PaintTool";
 
-type workerEventKey = "setCanvas" | "setTool" | "toolOp" | "log";
+type workerEventKey = "setCanvas" | "setTool" | "toolOp" | "log" | "postBack" | "returnBitmap";
 
 export interface DocWorkerEvent<T = any> {
     key: workerEventKey;
@@ -24,6 +24,10 @@ export interface ToolOpEvent {
         type: "down" | "up" | "move";
         pressure: number;
     };
+}
+
+export interface PostBackEvent {
+    key: string;
 }
 
 
@@ -76,6 +80,15 @@ export function docManagerWorker() {
                 console.log(workerEvent.data);
                 console.log(canvas);
                 console.log(tool);
+                break;
+            case "postBack":
+                postMessage("DocManagerWorker.ts got postBack");
+                break;
+            case "returnBitmap":
+                ctx.fillStyle = "red";
+                ctx.fillRect(0, 0, 100, 100);
+                let bitmap = canvas.transferToImageBitmap();
+                postMessage(bitmap);
                 break;
             default:
                 console.log("DocManagerWorker.ts got unknown message: " + workerEvent.key);
