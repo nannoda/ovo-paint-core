@@ -8,7 +8,8 @@ import {
 } from "./Documents/DocManager/DocManagerWorker";
 import {DotPen} from "./PaintTools/DotPen";
 import {BitmapLayer} from "./Documents/DocNodes/BitmapLayer";
-import {WorkerCanvas} from "./Documents/DocNodes/WorkerCanvas";
+import {WorkerCanvas2D} from "./submodules/common-ts-utils/WebWorker/WorkerCanvas2D";
+import {currUser} from "./Documents/Security/User";
 
 console.log("Main.ts");
 
@@ -20,7 +21,7 @@ function main() {
     let layer = new BitmapLayer(size);
     htmlCanvas.width = size[0];
     htmlCanvas.height = size[1];
-
+    console.log(currUser);
     if( localStorage.getItem("USER_SIGNATURE") === null) {
         console.log("Setting user signature");
         let signature = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
@@ -38,7 +39,7 @@ function main() {
     (self as any).test = undefined;
     self.eval("console.log(test)");
 
-    let workerCanvas = new WorkerCanvas(size[0], size[1]);
+    let workerCanvas = new WorkerCanvas2D(size[0], size[1]);
 
 
     let ctx = htmlCanvas.getContext("2d") as CanvasRenderingContext2D;

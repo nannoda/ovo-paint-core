@@ -1,6 +1,11 @@
+import {currUser, User} from "./Security/User";
+
 export class Document {
     private _name: string;
     private _content: string;
+
+    lastModified: Date = new Date();
+    lastModifiedBy: User = currUser;
 
     constructor(name: string, content: string) {
         this._name = name;
