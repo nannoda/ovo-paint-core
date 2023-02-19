@@ -1,9 +1,10 @@
-export interface PaintToolEvent<T = any> {
+import {DocNode} from "./Documents/DocNodes/DocNode";
+
+export interface PaintToolEvent<NodeType extends DocNode = DocNode, ExtraType = any> {
     pos: Vec2;
     button: number;
     type: "down" | "up" | "move";
     pressure: number;
-    canvas: OffscreenCanvas;
-    ctx: OffscreenCanvasRenderingContext2D;
-    extra: T;
+    node: NodeType;
+    extra?: ExtraType;
 }

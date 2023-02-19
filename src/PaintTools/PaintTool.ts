@@ -1,7 +1,16 @@
 import {PaintToolEvent} from "../PaintToolEvent";
+import {DocNode} from "../Documents/DocNodes/DocNode";
 
-export interface PaintTool {
-    onDown(e: PaintToolEvent): void;
-    onMove(e: PaintToolEvent): void;
-    onUp(e: PaintToolEvent): void;
+export abstract class PaintTool<NodeType extends DocNode> {
+    onDown(e: PaintToolEvent<NodeType>): void {
+
+    }
+
+    onMove(e: PaintToolEvent<NodeType>): void {
+
+    }
+
+    onUp(e: PaintToolEvent<NodeType>): void {
+
+    }
 }
