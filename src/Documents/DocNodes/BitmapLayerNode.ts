@@ -62,7 +62,7 @@ export class BitmapLayerNode extends DocNode {
         e.ctx.drawImage(this._cachedImage, this.offset[0], this.offset[1]);
         e.ctx.drawImage(this.activeCanvas, this.offset[0], this.offset[1]);
         // e.ctx.drawImage(this.workerCanvas.content, this.offset[0], this.offset[1]);
-        console.log("Rendering PixelLayerNode" + this.name);
+        // console.log("Rendering PixelLayerNode" + this.name);
     }
 
     render(e: DocNodeRenderEvent): void {

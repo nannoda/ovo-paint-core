@@ -10,6 +10,7 @@ export class BasicPen extends BitmapPaintTool {
 
     onDown(e: PaintToolEvent<BitmapLayerNode>) {
         super.onDown(e);
+        e.node.activeCtx.lineCap = "round";
         this.isDrawing = true;
     }
 
@@ -29,6 +30,7 @@ export class BasicPen extends BitmapPaintTool {
             let p2 = this.lastPoints[1];
             let p3 = this.lastPoints[2];
             let p4 = this.lastPoints[3];
+            ctx.lineWidth = 20 * e.pressure;
 
             drawHermitCurve(ctx, p1, p2, p3, p4)
             this.lastPoints.shift();

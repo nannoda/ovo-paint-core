@@ -61,7 +61,7 @@ export class GroupNode extends DocNode {
     }
 
     render(e: DocNodeRenderEvent) {
-        console.log("Rendering GroupNode: " + this.name)
+        // console.log("Rendering GroupNode: " + this.name)
         switch (e.renderMode) {
             case "background":
                 this._renderBackground(e);

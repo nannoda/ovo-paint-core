@@ -24,7 +24,7 @@ export class OVODocument {
     _canvas: OffscreenCanvas;
     _ctx: OffscreenCanvasRenderingContext2D;
     cache: DocumentCache;
-    backgroundFillStyle: string | CanvasGradient | CanvasPattern = "white";
+    backgroundFillStyle: string | CanvasGradient | CanvasPattern;
     _rootNode: GroupNode;
     _activeNode: DocNode;
 
@@ -47,6 +47,15 @@ export class OVODocument {
             foreground: new OffscreenCanvas(width, height)
         }
 
+        let image = new Image();
+        image.src = "./assets/paper.png";
+        image.onload = () => {
+            this.backgroundFillStyle = this._ctx.createPattern(image, "repeat") as CanvasPattern;
+        }
+        this.backgroundFillStyle = "white";
+
+        // this.backgroundFillStyle = this._ctx.createPattern(image, "repeat") as CanvasPattern;
+
 
         this._rootNode = new GroupNode("root");
         this._activeNode = this._rootNode;
@@ -57,7 +66,7 @@ export class OVODocument {
     }
 
     render(e: DocumentRenderOptions): void {
-        console.log("Rendering Document: " + this.name);
+        // console.log("Rendering Document: " + this.name);
         switch (e.renderMode) {
             case "export":
                 this.drawBackgroundImage();
@@ -86,7 +95,7 @@ export class OVODocument {
     }
 
     drawBackgroundImage(): void {
-        console.log("Rendering Document Background: " + this.name);
+        // console.log("Rendering Document Background: " + this.name);
         this._ctx.fillStyle = this.backgroundFillStyle;
         this._ctx.fillRect(0, 0, this._canvas.width, this._canvas.height);
         this.cache.background = this._canvas;
