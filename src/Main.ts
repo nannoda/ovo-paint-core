@@ -3,6 +3,7 @@ import {GroupNode} from "./Documents/DocNodes/GroupNode";
 import {OVODocument} from "./Documents/OVODocument";
 import {DebugPen} from "./PaintTools/BitmapPaintTools/DebugPen";
 import {BasicPen} from "./PaintTools/BitmapPaintTools/BasicPen";
+import {IUndoRedo} from "./Interface/IUndoRedo";
 
 console.log("Main.ts");
 
@@ -16,7 +17,7 @@ function main() {
     htmlCanvas.width = size[0];
     htmlCanvas.height = size[1];
 
-    let doc = new OVODocument("Untitled",size[0], size[1]);
+    let doc = new OVODocument("Untitled", size[0], size[1]);
 
 
     let layer1 = new BitmapLayerNode(size[0], size[1], "Layer 1");
@@ -58,12 +59,31 @@ function main() {
     group2.addNode(group4);
 
 
-
-    doc._rootNode.addNode(group2);
+    doc.rootNode.addNode(group2);
 
     let pen = new BasicPen();
 
     doc._activeNode = layer1;
+
+    window.addEventListener("keydown", (e) => {
+        e.preventDefault();
+        if (e.key === "z" && e.ctrlKey) {
+            console.log(e)
+            if (e.shiftKey) {
+                layer1.redo()
+            } else {
+                layer1.undo()
+            }
+        }
+    })
+
+    window.addEventListener("keydown", (e) => {
+        if (e.key === "y" && e.ctrlKey) {
+            layer1.redo()
+        }
+    })
+
+    let history: IUndoRedo[] = [];
 
     htmlCanvas.addEventListener("pointerdown", (e) => {
         pen.onDown(
@@ -72,7 +92,8 @@ function main() {
                 pressure: e.pressure,
                 node: doc._activeNode as BitmapLayerNode,
                 type: "down",
-                button: e.button
+                button: e.button,
+                history: history
             }
         );
     });
@@ -83,7 +104,8 @@ function main() {
                 pressure: e.pressure,
                 node: doc._activeNode as BitmapLayerNode,
                 type: "move",
-                button: e.button
+                button: e.button,
+                history: history
             }
         );
         // doc.render({
@@ -99,11 +121,13 @@ function main() {
                 pressure: e.pressure,
                 node: doc._activeNode as BitmapLayerNode,
                 type: "up",
-                button: e.button
+                button: e.button,
+                history: history
             }
         );
     });
     let ctx = htmlCanvas.getContext("2d") as CanvasRenderingContext2D;
+
     function frame() {
         doc.render({
             renderMode: "export",
@@ -112,6 +136,7 @@ function main() {
         ctx.drawImage(doc.content, 0, 0);
         requestAnimationFrame(frame);
     }
+
     frame();
 }
 

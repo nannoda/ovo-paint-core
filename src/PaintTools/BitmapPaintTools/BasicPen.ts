@@ -42,7 +42,7 @@ export class BasicPen extends BitmapPaintTool {
     onUp(e: PaintToolEvent<BitmapLayerNode>) {
         super.onUp(e);
         this.isDrawing = false;
-        e.node.flushActionCache();
+        e.node.createSnapshot();
         this.lastPoints = [];
     }
 

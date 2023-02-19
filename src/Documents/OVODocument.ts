@@ -1,6 +1,7 @@
 import {currUser, User} from "./Security/User";
 import {DocNode} from "./DocNodes/DocNode";
 import {GroupNode} from "./DocNodes/GroupNode";
+import {IUndoRedo} from "../Interface/IUndoRedo";
 
 type DocumentRenderMode = "export" | "edit";
 
@@ -25,8 +26,14 @@ export class OVODocument {
     _ctx: OffscreenCanvasRenderingContext2D;
     cache: DocumentCache;
     backgroundFillStyle: string | CanvasGradient | CanvasPattern;
-    _rootNode: GroupNode;
+    private readonly _rootNode: GroupNode;
     _activeNode: DocNode;
+
+    get rootNode(): GroupNode {
+        return this._rootNode;
+    }
+
+    _history: IUndoRedo[] = [];
 
     constructor(name: string,
                 width: number, height: number,
