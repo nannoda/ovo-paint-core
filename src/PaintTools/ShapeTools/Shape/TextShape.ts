@@ -1,8 +1,11 @@
 import {Shape} from "./Shape";
+import WebFont from "webfontloader";
 
 export class TextShape extends Shape {
     _content: string;
     position: Vec2;
+
+    _knowSize:boolean = false;
 
     font: string;
     fontSize: number;
@@ -15,7 +18,13 @@ export class TextShape extends Shape {
     set content(value: string) {
         this._content = value;
         [this.width, this.height] = this.getSize();
+        WebFont.load({
+            google: {
+                families: [this.font]
+            }
+        })
     }
+
 
     get content(): string {
         return this._content;
@@ -38,6 +47,35 @@ export class TextShape extends Shape {
         this.font = font;
         this.fontSize = size;
 
+        let link = document.createElement("link") as HTMLLinkElement;
+        let fontName = font.split(" ").join("+");
+
+        let url = `https://fonts.googleapis.com/css2?family=${fontName}&display=swap`;
+
+        let success = false;
+
+        fetch(url).then((res) => {
+            if (res.status === 200){
+                console.log("Font loaded")
+                res.text().then(
+                    (text) => {
+                        console.log(text)
+                        let dict = CSS.escape(text);
+                        console.log(dict)
+                    }
+                )
+            }
+        })
+
+
+
+
+        link.href = url;
+        link.rel = "stylesheet";
+        document.head.appendChild(link);
+
+
+
         [this.width, this.height] = this.getSize();
     }
 
@@ -45,18 +83,15 @@ export class TextShape extends Shape {
         e.fillStyle = "black";
         e.font = `${this.fontSize}px ${this.font}`;
         if (this.order === "h") {
-           this. drawText(this.content, e);
-        }else{
-            let lines = this.content.split("\n");
-
-
+            this.drawText(this.content, e);
+        } else {
             let tmpText = this.content.split("").join("\n");
             // console.log(tmpText)
             this.drawText(tmpText, e);
         }
     }
 
-    drawText(content:string, e:OffscreenCanvasRenderingContext2D):void{
+    drawText(content: string, e: OffscreenCanvasRenderingContext2D): void {
         e.fillStyle = "black";
         e.font = `${this.fontSize}px ${this.font}`;
         const lines = content.split("\n");
@@ -74,6 +109,11 @@ export class TextShape extends Shape {
     }
 
     renderUI(e: OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D): void {
+        if  (!this._knowSize){
+            [this.width, this.height] = this.getSize();
+            this._knowSize = true;
+        }
+
         e.fillStyle = "black";
         e.strokeStyle = "black";
         let minX = this.position[0];

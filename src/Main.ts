@@ -9,6 +9,7 @@ import {ShapeLayerNode} from "./Documents/DocNodes/Layers/ShapeLayerNode";
 import {TextTool} from "./PaintTools/ShapeTools/TextTool";
 import {BezierCurveTool} from "./PaintTools/ShapeTools/BezierCurveTool";
 import {printDocNodeTree} from "./Debug";
+import {Grid3DRefNode} from "./Documents/DocNodes/Layers/Grid3DRefNode";
 
 console.log("Main.ts");
 
@@ -16,14 +17,39 @@ export function penTest() {
 
 }
 
+export function saveTest(){
+    let btn = document.createElement("button");
+    btn.innerText = "Save";
+    btn.addEventListener("click", () => {
+        let canvas = document.getElementById("canvas") as HTMLCanvasElement;
+        let canvasData = canvas.toDataURL("image/png");
+        let data = {
+            data: canvasData,
+            name: "test.png"
+        }
+        let jsonStr = JSON.stringify(data);
+        let blob = new Blob([jsonStr], {type: "application/json"});
+
+        let link = document.createElement("a");
+
+        link.download = "test.json";
+        link.href = URL.createObjectURL(blob);
+        link.click();
+
+    })
+    document.body.appendChild(btn);
+}
+
 function main() {
+    saveTest();
     let htmlCanvas = document.getElementById("canvas") as HTMLCanvasElement;
-    let size: Vec2 = [300, 300];
+    let size: Vec2 = [3000, 3000];
     htmlCanvas.width = size[0];
     htmlCanvas.height = size[1];
 
-    document.fonts.ready.then((set  ) => {
+    document.fonts.ready.then((set ) => {
         console.log("Fonts loaded")
+        console.log(set)
         set.forEach((font) => {
             console.log(font.family)
         })
@@ -92,7 +118,7 @@ function main() {
 
     group2.addNode(group4);
 
-
+    group2.addNode(new Grid3DRefNode(size))
 
 // JavaScript code
     const myObject = document.getElementById('my-object');
@@ -101,10 +127,10 @@ function main() {
 
     doc.rootNode.addNode(group2);
 
-    let tool = new BasicPen();
+    let tool = new TextTool();
 
     // doc._activeNode = layer7;
-    doc._activeNode = layer1;
+    doc._activeNode = layer7;
 
     printDocNodeTree(doc.rootNode);
 
@@ -148,7 +174,7 @@ function main() {
             {
                 pos: [e.offsetX, e.offsetY],
                 pressure: e.pressure,
-                node: doc._activeNode as BitmapLayerNode,
+                node: doc._activeNode as ShapeLayerNode,
                 type: "down",
                 button: e.button,
                 history: history,
@@ -161,7 +187,7 @@ function main() {
             {
                 pos: [e.offsetX, e.offsetY],
                 pressure: e.pressure,
-                node: doc._activeNode as BitmapLayerNode,
+                node: doc._activeNode as ShapeLayerNode,
                 type: "move",
                 button: e.button,
                 history: history,
@@ -179,7 +205,7 @@ function main() {
             {
                 pos: [e.offsetX, e.offsetY],
                 pressure: e.pressure,
-                node: doc._activeNode as BitmapLayerNode,
+                node: doc._activeNode as ShapeLayerNode,
                 type: "up",
                 button: e.button,
                 history: history,
