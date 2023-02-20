@@ -1,9 +1,13 @@
-import {BitmapLayerNode} from "./Documents/DocNodes/BitmapLayerNode";
+import {BitmapLayerNode} from "./Documents/DocNodes/Layers/BitmapLayerNode";
 import {GroupNode} from "./Documents/DocNodes/GroupNode";
 import {OVODocument} from "./Documents/OVODocument";
 import {DebugPen} from "./PaintTools/BitmapPaintTools/DebugPen";
 import {BasicPen} from "./PaintTools/BitmapPaintTools/BasicPen";
 import {IUndoRedo} from "./Interface/IUndoRedo";
+import {BitmapRectTool} from "./PaintTools/BitmapPaintTools/BitmapRectTool";
+import {ShapeLayerNode} from "./Documents/DocNodes/Layers/ShapeLayerNode";
+import {TextTool} from "./PaintTools/ShapeTools/TextTool";
+import {BezierCurveTool} from "./PaintTools/ShapeTools/BezierCurveTool";
 
 console.log("Main.ts");
 
@@ -13,10 +17,16 @@ export function penTest() {
 
 function main() {
     let htmlCanvas = document.getElementById("canvas") as HTMLCanvasElement;
-    let size: Vec2 = [8000, 4500];
+    let size: Vec2 = [3840, 2160];
     htmlCanvas.width = size[0];
     htmlCanvas.height = size[1];
 
+    document.fonts.ready.then((set  ) => {
+        console.log("Fonts loaded")
+        set.forEach((font) => {
+            console.log(font.family)
+        })
+    })
     let doc = new OVODocument("Untitled", size[0], size[1]);
 
 
@@ -39,10 +49,14 @@ function main() {
     layer6.activeCtx.fillStyle = "orange";
     layer6.activeCtx.fillRect(500, 500, 100, 100);
 
+    let layer7 = new ShapeLayerNode();
+
     let group1 = new GroupNode("Group 1");
     let group2 = new GroupNode("Group 2");
     let group3 = new GroupNode("Group 3");
     let group4 = new GroupNode("Group 4");
+
+    group1.addNode(layer7);
 
     group1.addNode(layer1);
     group1.addNode(layer2);
@@ -61,23 +75,28 @@ function main() {
 
     doc.rootNode.addNode(group2);
 
-    let pen = new BasicPen();
+    let tool = new TextTool();
 
-    doc._activeNode = layer1;
+    doc._activeNode = layer7;
 
     window.addEventListener("keydown", (e) => {
         e.preventDefault();
         if (e.key === "z" && e.ctrlKey) {
             console.log(e)
             if (e.shiftKey) {
-                layer1.redo()
+
             } else {
-                layer1.undo()
+                let undo = history.pop();
+                if (undo) {
+                    undo.undo();
+                }
+
             }
         }
     })
 
     window.addEventListener("keydown", (e) => {
+        e.preventDefault();
         if (e.key === "y" && e.ctrlKey) {
             layer1.redo()
         }
@@ -85,27 +104,40 @@ function main() {
 
     let history: IUndoRedo[] = [];
 
+    let uiCanvas = new OffscreenCanvas(size[0], size[1])
+    let uiCtx = uiCanvas.getContext("2d") as OffscreenCanvasRenderingContext2D;
+
+
+    let ui = {
+        canvas: uiCanvas,
+        ctx: uiCtx,
+        scale: 1
+    }
+
     htmlCanvas.addEventListener("pointerdown", (e) => {
-        pen.onDown(
+        tool.onDown(
             {
                 pos: [e.offsetX, e.offsetY],
                 pressure: e.pressure,
-                node: doc._activeNode as BitmapLayerNode,
+                node: doc._activeNode as ShapeLayerNode,
                 type: "down",
                 button: e.button,
-                history: history
+                history: history,
+                ui: ui
+
             }
         );
     });
     htmlCanvas.addEventListener("pointermove", (e) => {
-        pen.onMove(
+        tool.onMove(
             {
                 pos: [e.offsetX, e.offsetY],
                 pressure: e.pressure,
-                node: doc._activeNode as BitmapLayerNode,
+                node: doc._activeNode as ShapeLayerNode,
                 type: "move",
                 button: e.button,
-                history: history
+                history: history,
+                ui: ui
             }
         );
         // doc.render({
@@ -115,14 +147,15 @@ function main() {
         // ctx.drawImage(doc.content, 0, 0);
     });
     htmlCanvas.addEventListener("pointerup", (e) => {
-        pen.onUp(
+        tool.onUp(
             {
                 pos: [e.offsetX, e.offsetY],
                 pressure: e.pressure,
-                node: doc._activeNode as BitmapLayerNode,
+                node: doc._activeNode as ShapeLayerNode,
                 type: "up",
                 button: e.button,
-                history: history
+                history: history,
+                ui: ui
             }
         );
     });
@@ -134,6 +167,7 @@ function main() {
         });
         ctx.clearRect(0, 0, size[0], size[1]);
         ctx.drawImage(doc.content, 0, 0);
+        ctx.drawImage(uiCanvas, 0, 0);
         requestAnimationFrame(frame);
     }
 

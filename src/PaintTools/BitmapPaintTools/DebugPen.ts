@@ -1,6 +1,6 @@
 import {BitmapPaintTool} from "./BitmapPaintTool";
 import {PaintToolEvent} from "../../PaintToolEvent";
-import {BitmapLayerNode} from "../../Documents/DocNodes/BitmapLayerNode";
+import {BitmapLayerNode} from "../../Documents/DocNodes/Layers/BitmapLayerNode";
 import {drawPointDebug} from "../../submodules/common-ts-utils/Canvas/PaintCanvas";
 
 export class DebugPen extends BitmapPaintTool {
@@ -21,6 +21,6 @@ export class DebugPen extends BitmapPaintTool {
     onUp(e: PaintToolEvent<BitmapLayerNode>) {
         super.onUp(e);
         this.isDrawing = false;
-        e.node.flushActionCache();
+        e.node.createSnapshot();
     }
 }

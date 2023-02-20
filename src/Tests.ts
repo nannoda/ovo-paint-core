@@ -1,4 +1,4 @@
-import {BitmapLayerNode} from "./Documents/DocNodes/BitmapLayerNode";
+import {BitmapLayerNode} from "./Documents/DocNodes/Layers/BitmapLayerNode";
 import {GroupNode} from "./Documents/DocNodes/GroupNode";
 
 export function nodeRenderTest() {

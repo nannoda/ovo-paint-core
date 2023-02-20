@@ -7,7 +7,11 @@ export interface PaintToolEvent<NodeType extends DocNode = DocNode, ExtraType = 
     type: "down" | "up" | "move";
     pressure: number;
     node: NodeType;
-
+    ui:{
+        canvas: HTMLCanvasElement | OffscreenCanvas;
+        ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D;
+        scale: number;
+    }
     history: IUndoRedo[];
     extra?: ExtraType;
 }
