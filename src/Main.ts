@@ -8,6 +8,7 @@ import {BitmapRectTool} from "./PaintTools/BitmapPaintTools/BitmapRectTool";
 import {ShapeLayerNode} from "./Documents/DocNodes/Layers/ShapeLayerNode";
 import {TextTool} from "./PaintTools/ShapeTools/TextTool";
 import {BezierCurveTool} from "./PaintTools/ShapeTools/BezierCurveTool";
+import {printDocNodeTree} from "./Debug";
 
 console.log("Main.ts");
 
@@ -17,7 +18,7 @@ export function penTest() {
 
 function main() {
     let htmlCanvas = document.getElementById("canvas") as HTMLCanvasElement;
-    let size: Vec2 = [3840, 2160];
+    let size: Vec2 = [300, 300];
     htmlCanvas.width = size[0];
     htmlCanvas.height = size[1];
 
@@ -27,6 +28,25 @@ function main() {
             console.log(font.family)
         })
     })
+
+    let scale = 1;
+    let canvasWidth = size[0] + "px";
+    let canvasHeight = size[1] + "px";
+    htmlCanvas.addEventListener("wheel", (e) => {
+        // e.preventDefault();
+        if (e.ctrlKey){
+            e.preventDefault();
+            scale -= e.deltaY * 0.005;
+            htmlCanvas.style.maxWidth = (parseInt(canvasWidth) * scale) + "px";
+            htmlCanvas.style.maxHeight = (parseInt(canvasHeight) * scale) + "px";
+            console.log(scale)
+        }
+        console.log(e)
+    })
+
+
+
+
     let doc = new OVODocument("Untitled", size[0], size[1]);
 
 
@@ -73,11 +93,20 @@ function main() {
     group2.addNode(group4);
 
 
+
+// JavaScript code
+    const myObject = document.getElementById('my-object');
+    let rotation = 0;
+
+
     doc.rootNode.addNode(group2);
 
-    let tool = new TextTool();
+    let tool = new BasicPen();
 
-    doc._activeNode = layer7;
+    // doc._activeNode = layer7;
+    doc._activeNode = layer1;
+
+    printDocNodeTree(doc.rootNode);
 
     window.addEventListener("keydown", (e) => {
         e.preventDefault();
@@ -119,12 +148,11 @@ function main() {
             {
                 pos: [e.offsetX, e.offsetY],
                 pressure: e.pressure,
-                node: doc._activeNode as ShapeLayerNode,
+                node: doc._activeNode as BitmapLayerNode,
                 type: "down",
                 button: e.button,
                 history: history,
                 ui: ui
-
             }
         );
     });
@@ -133,7 +161,7 @@ function main() {
             {
                 pos: [e.offsetX, e.offsetY],
                 pressure: e.pressure,
-                node: doc._activeNode as ShapeLayerNode,
+                node: doc._activeNode as BitmapLayerNode,
                 type: "move",
                 button: e.button,
                 history: history,
@@ -151,7 +179,7 @@ function main() {
             {
                 pos: [e.offsetX, e.offsetY],
                 pressure: e.pressure,
-                node: doc._activeNode as ShapeLayerNode,
+                node: doc._activeNode as BitmapLayerNode,
                 type: "up",
                 button: e.button,
                 history: history,
