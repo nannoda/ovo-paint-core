@@ -2,6 +2,7 @@ import {currUser, User} from "./Security/User";
 import {DocNode} from "./DocNodes/DocNode";
 import {GroupNode} from "./DocNodes/GroupNode";
 import {IUndoRedo} from "../Interface/IUndoRedo";
+import {getCheckBoard} from "./BackgroundFills";
 
 type DocumentRenderMode = "export" | "edit";
 
@@ -36,7 +37,8 @@ export class OVODocument {
     _canvas: OffscreenCanvas;
     _ctx: OffscreenCanvasRenderingContext2D;
     cache: DocumentCache;
-    backgroundFillStyle: string | CanvasGradient | CanvasPattern;
+    // backgroundFillStyle: string | CanvasGradient | CanvasPattern;
+    background: "white" | "black" | "transparent";
     private readonly _rootNode: GroupNode;
     _activeNode: DocNode;
 
@@ -64,15 +66,14 @@ export class OVODocument {
             background: new OffscreenCanvas(width, height),
             foreground: new OffscreenCanvas(width, height)
         }
+        let checkBoard = getCheckBoard();
+        // this.backgroundFillStyle = "white";
 
-        let image = new Image();
-        image.src = "./assets/paper.png";
-        image.onload = () => {
-            this.backgroundFillStyle = this._ctx.createPattern(image, "repeat") as CanvasPattern;
-        }
-        this.backgroundFillStyle = "white";
+        this.background = "white";
 
-        // this.backgroundFillStyle = this._ctx.createPattern(image, "repeat") as CanvasPattern;
+        // this.backgroundFillStyle = this._ctx.createPattern(checkBoard, "repeat") as CanvasPattern;
+        //
+        // console.log(this.backgroundFillStyle)
 
 
         this._rootNode = new GroupNode("root");
@@ -114,7 +115,7 @@ export class OVODocument {
 
     drawBackgroundImage(): void {
         // console.log("Rendering Document Background: " + this.name);
-        this._ctx.fillStyle = this.backgroundFillStyle;
+        this._ctx.fillStyle = this.background;
         this._ctx.fillRect(0, 0, this._canvas.width, this._canvas.height);
         this.cache.background = this._canvas;
     }
