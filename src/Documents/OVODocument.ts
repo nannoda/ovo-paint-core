@@ -21,6 +21,17 @@ export interface DocumentCache {
 
 export class OVODocument {
     public name: string;
+    get width(): number {
+        return this._canvas.width;
+    }
+
+    get height(): number {
+        return this._canvas.height;
+    }
+
+    get canvas(): OffscreenCanvas {
+        return this._canvas;
+    }
     modifyInfo: DocumentModifyInfo;
     _canvas: OffscreenCanvas;
     _ctx: OffscreenCanvasRenderingContext2D;
