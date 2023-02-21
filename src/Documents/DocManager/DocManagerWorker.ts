@@ -1,6 +1,6 @@
 // import {PaintTool} from "../../PaintTools/PaintTool";
 import {PaintToolEvent} from "../../PaintToolEvent";
-import {PaintTool} from "../../PaintTools/PaintTool";
+import {PaintTool} from "../../../../PaintTools/PaintTool";
 
 type workerEventKey = "setCanvas" | "setTool" | "toolOp" | "log" | "postBack" | "returnBitmap";
 

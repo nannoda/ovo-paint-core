@@ -8,5 +8,4 @@ export function printDocNodeTree(node: DocNode, depth: number = 0) {
             printDocNodeTree(child, depth + 1);
         }
     }
-
 }

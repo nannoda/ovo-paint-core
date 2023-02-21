@@ -1,8 +1,7 @@
-import {DocNode, DocNodeRenderEvent} from "../DocNode";
-import {Shape} from "../../../PaintTools/ShapeTools/Shape/Shape";
+import {DocNode, DocNodeRenderEvent} from "../../DocNode";
+import {Shape} from "./Shape";
 
 export class ShapeLayerNode extends DocNode{
-
     constructor(name: string = "New Shape Layer", offset: Vec2 = [0, 0]) {
         super(name, offset);
     }
@@ -24,7 +23,6 @@ export class ShapeLayerNode extends DocNode{
         }
         // e.ctx.drawImage(tmpCanvas, this.offset[0], this.offset[1]);
     }
-
     getInRangeShapes(pos: Vec2): Shape | null {
         for (const shape of this.shapes) {
             if (shape.inRange(pos)) {
