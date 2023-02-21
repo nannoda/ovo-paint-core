@@ -1,6 +1,5 @@
 import {DocNode} from "./Documents/DocNodes/DocNode";
 import {IUndoRedo} from "./Interface/IUndoRedo";
-import {Vec2} from "./submodules/common-ts-utils/Math/Vector";
 
 export interface PaintToolEvent<NodeType extends DocNode = DocNode, ExtraType = any> {
     pos: Vec2;
@@ -12,6 +11,11 @@ export interface PaintToolEvent<NodeType extends DocNode = DocNode, ExtraType = 
         canvas: HTMLCanvasElement | OffscreenCanvas;
         ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D;
         scale: number;
+    },
+    key: {
+        shift: boolean;
+        ctrl: boolean;
+        alt: boolean;
     }
     history: IUndoRedo[];
     extra?: ExtraType;
