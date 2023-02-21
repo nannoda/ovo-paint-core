@@ -55,7 +55,9 @@ export class GroupNode extends DocNode {
     }
 
     _renderExport(e: DocNodeRenderEvent) {
+        // console.log("Rendering GroupNode: " + this.name)
         for (let node of this._nodes) {
+            // console.log("Rendering Node: " + node.name)
             node.render(e);
         }
     }

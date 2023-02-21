@@ -1,13 +1,14 @@
 import {DocNode} from "./Documents/DocNodes/DocNode";
 import {IUndoRedo} from "./Interface/IUndoRedo";
+import {OVODocument} from "./Documents/OVODocument";
 
-export interface PaintToolEvent<NodeType extends DocNode = DocNode, ExtraType = any> {
+export interface PaintToolEvent<NodeType extends DocNode> {
     pos: Vec2;
     // button: number;
-    type: "down" | "up" | "move";
+    // type: "down" | "up" | "move";
     pressure: number;
-    node: NodeType;
-    ui:{
+    doc: OVODocument;
+    ui: {
         canvas: HTMLCanvasElement | OffscreenCanvas;
         ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D;
         scale: number;
@@ -18,5 +19,6 @@ export interface PaintToolEvent<NodeType extends DocNode = DocNode, ExtraType = 
         alt: boolean;
     }
     history: IUndoRedo[];
-    extra?: ExtraType;
+
+    node: NodeType;
 }

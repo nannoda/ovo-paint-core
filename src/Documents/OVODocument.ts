@@ -42,6 +42,14 @@ export class OVODocument {
     private readonly _rootNode: GroupNode;
     _activeNode: DocNode;
 
+    get activeNode(): DocNode {
+        return this._activeNode;
+    }
+
+    set activeNode(value: DocNode) {
+        this._activeNode = value;
+    }
+
     get rootNode(): GroupNode {
         return this._rootNode;
     }
@@ -66,15 +74,10 @@ export class OVODocument {
             background: new OffscreenCanvas(width, height),
             foreground: new OffscreenCanvas(width, height)
         }
-        let checkBoard = getCheckBoard();
+        // let checkBoard = getCheckBoard();
         // this.backgroundFillStyle = "white";
 
-        this.background = "white";
-
-        // this.backgroundFillStyle = this._ctx.createPattern(checkBoard, "repeat") as CanvasPattern;
-        //
-        // console.log(this.backgroundFillStyle)
-
+        this.background = "transparent";
 
         this._rootNode = new GroupNode("root");
         this._activeNode = this._rootNode;
@@ -115,8 +118,13 @@ export class OVODocument {
 
     drawBackgroundImage(): void {
         // console.log("Rendering Document Background: " + this.name);
-        this._ctx.fillStyle = this.background;
-        this._ctx.fillRect(0, 0, this._canvas.width, this._canvas.height);
+
+        if (this.background === "transparent") {
+            this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
+        }else{
+            this._ctx.fillStyle = this.background;
+            this._ctx.fillRect(0, 0, this._canvas.width, this._canvas.height);
+        }
         this.cache.background = this._canvas;
     }
 }
