@@ -1,4 +1,4 @@
-export type RenderMode = "export" | "background" | "foreground" | "activeNode";
+export type RenderMode = "export" | "edit"| "background" | "foreground" | "activeNode";
 
 export interface DocNodeRenderEvent {
     activeNode: DocNode;

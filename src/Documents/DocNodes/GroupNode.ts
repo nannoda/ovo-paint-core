@@ -73,6 +73,9 @@ export class GroupNode extends DocNode {
                 break;
             case "export":
                 this._renderExport(e);
+                break;
+            case "edit":
+                this._renderExport(e);
         }
     }
 }

@@ -3,26 +3,26 @@ import {IUndoRedo} from "../../../Interface/IUndoRedo";
 import {clearCanvas} from "../../../submodules/common-ts-utils/Canvas/PaintCanvas";
 
 export class BitmapLayerNode extends DocNode implements IUndoRedo {
-    activeCtx: OffscreenCanvasRenderingContext2D;
-    activeCanvas: OffscreenCanvas;
+    ctx: OffscreenCanvasRenderingContext2D;
+    canvas: OffscreenCanvas;
     private readonly _undoQueue: CanvasImageSource[] = [];
     private readonly _redoStack: CanvasImageSource[] = [];
 
-    constructor(width: number, height: number, name: string = "New Pixel Layer", offset: Vec2 = [0, 0]) {
+    constructor(width: number, height: number, name: string = "New Bitmap Layer", offset: Vec2 = [0, 0]) {
         super(name, offset);
-        this.activeCanvas = new OffscreenCanvas(width, height);
-        this.activeCtx = this.activeCanvas.getContext("2d") as OffscreenCanvasRenderingContext2D;
-        if (!this.activeCtx) {
-            throw new Error("Failed to create OffscreenCanvasRenderingContext2D");
+        this.canvas = new OffscreenCanvas(width, height);
+        this.ctx = this.canvas.getContext("2d") as OffscreenCanvasRenderingContext2D;
+        if (!this.ctx) {
+            throw new Error("Failed to create OffscreenCanvasRenderingContext2D for BitmapLayerNode");
         }
     }
 
     get width(): number {
-        return this.activeCanvas.width;
+        return this.canvas.width;
     }
 
     get height(): number {
-        return this.activeCanvas.height;
+        return this.canvas.height;
     }
 
     get lastImage(): CanvasImageSource | null {
@@ -40,10 +40,7 @@ export class BitmapLayerNode extends DocNode implements IUndoRedo {
         } else {
             ctx.globalAlpha = this.currentTransparency;
         }
-        if (this.lastImage){
-            ctx.drawImage(this.lastImage, 0, 0);
-        }
-        ctx.drawImage(this.activeCanvas, this.offset[0], this.offset[1]);
+        ctx.drawImage(this.canvas, this.offset[0], this.offset[1]);
     }
 
     render(e: DocNodeRenderEvent): void {
@@ -69,18 +66,15 @@ export class BitmapLayerNode extends DocNode implements IUndoRedo {
             case "export":
                 this.rawRender(e);
                 break;
+            case "edit":
+                this.rawRender(e);
         }
     }
 
     createSnapshot(): void {
-        let tmpCanvas = new OffscreenCanvas(this.width, this.height);
-        let tmpCtx = tmpCanvas.getContext("2d") as OffscreenCanvasRenderingContext2D;
-        if (this.lastImage){
-            tmpCtx.drawImage(this.lastImage, 0, 0);
-        }
-        tmpCtx.drawImage(this.activeCanvas, 0, 0);
-        this._undoQueue.push(tmpCanvas.transferToImageBitmap());
-        clearCanvas(this.activeCanvas);
+        let image = this.canvas.transferToImageBitmap();
+        this._undoQueue.push(image);
+        this.ctx.drawImage(image, 0, 0);
     }
 
     redo(): void {
@@ -89,8 +83,9 @@ export class BitmapLayerNode extends DocNode implements IUndoRedo {
             console.log("Nothing to redo");
             return;
         }
+        clearCanvas(this.canvas);
         let redoImage = this._redoStack.pop() as CanvasImageSource;
-        this.activeCtx.drawImage(redoImage, 0, 0);
+        this.ctx.drawImage(redoImage, 0, 0);
         this.createSnapshot();
     }
 
@@ -108,7 +103,8 @@ export class BitmapLayerNode extends DocNode implements IUndoRedo {
             return;
         }
         let undoImage = this._undoQueue.pop() as CanvasImageSource;
+        clearCanvas(this.canvas);
+        this.ctx.drawImage(undoImage, 0, 0);
         this._redoStack.push(undoImage);
-        clearCanvas(this.activeCanvas);
     }
 }
