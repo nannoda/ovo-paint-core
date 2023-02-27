@@ -76,9 +76,6 @@ export class OVODocument {
             background: new OffscreenCanvas(width, height),
             foreground: new OffscreenCanvas(width, height)
         }
-        // let checkBoard = getCheckBoard();
-        // this.backgroundFillStyle = "white";
-
         this.background = "transparent";
 
         this._rootNode = new GroupNode("root");

@@ -3,6 +3,10 @@ import {DocNode, DocNodeRenderEvent} from "./DocNode";
 export class GroupNode extends DocNode {
     _nodes: DocNode[] = [];
 
+    get children(){
+        return this._nodes;
+    }
+
     constructor(name: string = "New Group", offset: Vec2 = [0, 0]) {
         super(name, offset);
     }
