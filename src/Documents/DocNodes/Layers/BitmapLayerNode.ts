@@ -3,8 +3,8 @@ import {IUndoRedo} from "../../../Interface/IUndoRedo";
 import {clearCanvas} from "../../../submodules/common-ts-utils/Canvas/PaintCanvas";
 
 export class BitmapLayerNode extends DocNode implements IUndoRedo {
-    ctx: OffscreenCanvasRenderingContext2D;
-    canvas: OffscreenCanvas;
+    readonly ctx: OffscreenCanvasRenderingContext2D;
+    readonly canvas: OffscreenCanvas;
     private readonly _undoQueue: CanvasImageSource[] = [];
     private readonly _redoStack: CanvasImageSource[] = [];
 

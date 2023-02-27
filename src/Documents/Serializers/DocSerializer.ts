@@ -1,8 +1,10 @@
 import {ISerializers} from "./ISerializers";
 import {OVODocument} from "../OVODocument";
 
-export abstract class DocSerializer implements ISerializers<OVODocument>{
+export abstract class DocSerializer {
     abstract get extension(): string;
-    abstract fromBlob(blob: Blob): Promise<OVODocument>;
+
+    abstract fromBlob(blob: Blob, name: string): Promise<OVODocument>;
+
     abstract toBlob(data: OVODocument): Promise<Blob>;
 }
