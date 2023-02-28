@@ -60,7 +60,6 @@ export class OVODocument {
     private readonly _canvas: OffscreenCanvas;
     private readonly _ctx: OffscreenCanvasRenderingContext2D;
     private cache: DocumentCache;
-    // backgroundFillStyle: string | CanvasGradient | CanvasPattern;
     background: "white" | "black" | "transparent";
     private readonly _rootNode: GroupNode;
     _activeNode: DocNode;
