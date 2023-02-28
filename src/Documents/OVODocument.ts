@@ -20,8 +20,29 @@ export interface DocumentCache {
     foreground: CanvasImageSource;
 }
 
+type docEventKey = "changeActiveNode"
+
 export class OVODocument {
     public name: string;
+
+    _events: { [key: string]: (() => Promise<void>)[] } = {};
+
+    on(key: docEventKey, callback: () => Promise<void>) {
+        if (!this._events[key]) {
+            this._events[key] = [];
+        }
+        this._events[key].push(callback);
+    }
+
+    trigger(key: docEventKey) {
+        if (this._events[key]) {
+            for (let callback of this._events[key]) {
+                (async () => {
+                    await callback();
+                })();
+            }
+        }
+    }
 
     get width(): number {
         return this._canvas.width;
@@ -49,6 +70,7 @@ export class OVODocument {
     }
 
     set activeNode(value: DocNode) {
+        this.trigger("changeActiveNode");
         this._activeNode = value;
     }
 
