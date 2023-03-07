@@ -7,7 +7,7 @@ export interface PaintToolEvent<NodeType extends DocNode> {
     // button: number;
     // type: "down" | "up" | "move";
     pressure: number;
-    doc: OVODocument;
+    // doc: OVODocument;
     ui: {
         canvas: HTMLCanvasElement | OffscreenCanvas;
         ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D;
