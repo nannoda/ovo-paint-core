@@ -44,6 +44,22 @@ export class OVODocument {
         }
     }
 
+    removeNode(node: DocNode) {
+        function deleteNode(parent: GroupNode, node: DocNode) {
+            for (let i = 0; i < parent.children.length; i++) {
+                if (parent.children[i] === node) {
+                    parent.children.splice(i, 1);
+                    return;
+                }
+                if (parent.children[i] instanceof GroupNode) {
+                    deleteNode(parent.children[i] as GroupNode, node);
+                }
+            }
+        }
+
+        deleteNode(this._rootNode, node);
+    }
+
     get width(): number {
         return this._canvas.width;
     }
