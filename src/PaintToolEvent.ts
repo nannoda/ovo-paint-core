@@ -20,6 +20,5 @@ export interface PaintToolEvent<NodeType extends DocNode> {
         alt: boolean;
     }
     history: IUndoRedo[];
-
     node: NodeType;
 }
