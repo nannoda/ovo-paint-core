@@ -1,3 +1,5 @@
+import {Vec2} from "../../submodules/common-ts-utils/Math/Vector";
+
 export type RenderMode = "export" | "edit"| "background" | "foreground" | "activeNode";
 
 export interface DocNodeRenderEvent {
