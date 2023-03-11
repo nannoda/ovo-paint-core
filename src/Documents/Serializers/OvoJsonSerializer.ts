@@ -1,5 +1,10 @@
 import {OVODocument} from "../OVODocument";
 import {DocSerializer} from "./DocSerializer";
+import {GroupNode} from "../DocNodes/GroupNode";
+import {BitmapLayerNode} from "../DocNodes/Layers/BitmapLayerNode";
+import {ShapeLayerNode} from "../DocNodes/Layers/ShapeLayer/ShapeLayerNode";
+import {ShapeState} from "../DocNodes/Layers/ShapeLayer/Shape";
+import {docToJsonV1} from "./OvoJsonV1/DocToJsonV1";
 
 function jsonStrToWarpedJson(jsonStr: string): string {
     const warpLength = 2;
@@ -33,7 +38,7 @@ export class OvoJsonSerializer extends DocSerializer {
         return "ovojson";
     }
 
-    async fromBlob(blob: Blob, name: string): Promise<OVODocument> {
+    async fromBlob(blob: Blob, name: string): Promise<OVODocument | null> {
         const str = await blob.text();
         if (str.length === 0) {
             throw new Error("Empty file");
@@ -45,13 +50,15 @@ export class OvoJsonSerializer extends DocSerializer {
         const wJsonStr = str.substring(headerStr.length);
 
 
-        throw new Error("Method not implemented.");
+        return null;
     }
 
     async toBlob(data: OVODocument): Promise<Blob> {
-        let str = headerStr + "\n";
-
-
-        throw new Error("Method not implemented.");
+        // let str = headerStr + "\n";
+        const jsonStr = await docToJsonV1(data);
+        const wJsonStr = jsonStrToWarpedJson(jsonStr);
+        const str = headerStr + wJsonStr;
+        return new Blob([str], {type: "text/plain"});
     }
 }
+
