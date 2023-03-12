@@ -1,4 +1,5 @@
 import {DocNode, DocNodeRenderEvent} from "./DocNode";
+import {Vec2} from "../../submodules/common-ts-utils/Math/Vector";
 
 export class GroupNode extends DocNode {
     _nodes: DocNode[] = [];

@@ -1,5 +1,5 @@
 export interface ShapeState {
-
+    type: string;
 }
 export type CanvasCtx = OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D;
 

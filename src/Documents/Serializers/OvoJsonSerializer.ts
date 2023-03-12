@@ -5,6 +5,7 @@ import {BitmapLayerNode} from "../DocNodes/Layers/BitmapLayerNode";
 import {ShapeLayerNode} from "../DocNodes/Layers/ShapeLayer/ShapeLayerNode";
 import {ShapeState} from "../DocNodes/Layers/ShapeLayer/Shape";
 import {docToJsonV1} from "./OvoJsonV1/DocToJsonV1";
+import {jsonToDocV1} from "./OvoJsonV1/DictToDocV1";
 
 function jsonStrToWarpedJson(jsonStr: string): string {
     const warpLength = 2;
@@ -39,18 +40,19 @@ export class OvoJsonSerializer extends DocSerializer {
     }
 
     async fromBlob(blob: Blob, name: string): Promise<OVODocument | null> {
+        // const str = await blob.text();
+        // if (str.length === 0) {
+        //     throw new Error("Empty file");
+        // }
+        // if (!str.startsWith(headerStr)) {
+        //     throw new Error("Invalid file header");
+        // }
+
+        // const wJsonStr = str.substring(headerStr.length);
+
         const str = await blob.text();
-        if (str.length === 0) {
-            throw new Error("Empty file");
-        }
-        if (!str.startsWith(headerStr)) {
-            throw new Error("Invalid file header");
-        }
-
-        const wJsonStr = str.substring(headerStr.length);
-
-
-        return null;
+        const doc = await jsonToDocV1(str)
+        return doc;
     }
 
     async toBlob(data: OVODocument): Promise<Blob> {

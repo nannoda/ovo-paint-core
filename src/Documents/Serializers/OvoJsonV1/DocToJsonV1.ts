@@ -2,7 +2,7 @@ import {OVODocument} from "../../OVODocument";
 import {GroupNode} from "../../DocNodes/GroupNode";
 import {BitmapLayerNode} from "../../DocNodes/Layers/BitmapLayerNode";
 import {ShapeLayerNode} from "../../DocNodes/Layers/ShapeLayer/ShapeLayerNode";
-import {BitmapNodeJson, DocumentJson, GroupNodeJson, ShapeNodeJson} from "./JsonTypeV1";
+import {BitmapNodeJson, DocumentJson, GroupNodeJson, Header, ShapeNodeJson} from "./JsonTypeV1";
 
 
 async function canvasToBase64(canvas: HTMLCanvasElement | OffscreenCanvas): Promise<string> {
@@ -18,21 +18,18 @@ async function canvasToBase64(canvas: HTMLCanvasElement | OffscreenCanvas): Prom
 }
 
 export async function docToJsonV1(doc: OVODocument) {
-    let header = {
-        version: "1.0",
-        type: "OVOJSON",
-        thumbnail: await canvasToBase64(doc.canvas)
-    }
+
 
     let docDict = {
         name: doc.name,
         width: doc.width,
         height: doc.height,
+        thumbnail: await canvasToBase64(doc.canvas),
         root: await groupNodeToJson(doc.rootNode)
     }
 
     const output: DocumentJson = {
-        header: header,
+        header: Header,
         doc: docDict
     }
     const jsonStr = JSON.stringify(output);

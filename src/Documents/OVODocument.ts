@@ -77,7 +77,7 @@ export class OVODocument {
     private readonly _ctx: OffscreenCanvasRenderingContext2D;
     private cache: DocumentCache;
     background: "white" | "black" | "transparent";
-    private readonly _rootNode: GroupNode;
+    protected _rootNode: GroupNode;
     _activeNode: DocNode;
 
     get activeNode(): DocNode {
@@ -91,6 +91,10 @@ export class OVODocument {
 
     get rootNode(): GroupNode {
         return this._rootNode;
+    }
+
+    set rootNode(value: GroupNode) {
+        this._rootNode = value;
     }
 
     _history: IUndoRedo[] = [];

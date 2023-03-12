@@ -3,7 +3,12 @@ import {ShapeState} from "../../DocNodes/Layers/ShapeLayer/Shape";
 
 type NodeType = "bitmap" | "group" | "shape";
 
-export const Header = {
+export interface IHeader {
+    version: string;
+    type: string;
+}
+
+export const Header:IHeader = {
     version: "1.0",
     type: "OVOJSON",
 }
@@ -24,7 +29,6 @@ export interface BitmapNodeJson extends NodeJson {
 export interface GroupNodeJson extends NodeJson {
     type: "group";
     children: NodeJson[];
-
 }
 
 export interface ShapeNodeJson extends NodeJson {
@@ -34,15 +38,12 @@ export interface ShapeNodeJson extends NodeJson {
 }
 
 export interface DocumentJson {
-    header: {
-        version: string;
-        type: string;
-        thumbnail: string;
-    }
+    header: IHeader;
     doc: {
         name: string;
         width: number;
         height: number;
+        thumbnail: string;
         root: GroupNodeJson;
     }
 }

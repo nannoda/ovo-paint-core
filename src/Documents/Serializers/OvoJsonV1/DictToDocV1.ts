@@ -1,30 +1,34 @@
 import {OVODocument} from "../../OVODocument";
-import {GroupNodeJson, Header} from "./JsonTypeV1";
+import {BitmapNodeJson, DocumentJson, GroupNodeJson, Header, ShapeNodeJson} from "./JsonTypeV1";
 import {GroupNode} from "../../DocNodes/GroupNode";
+import {BitmapLayerNode} from "../../DocNodes/Layers/BitmapLayerNode";
+import {ShapeLayerNode} from "../../DocNodes/Layers/ShapeLayer/ShapeLayerNode";
+import {TextShape} from "../../../../../PaintTools/ShapeTools/Shape/TextShape";
+import {SimpleShape} from "../../../../../PaintTools/ShapeTools/Shape/SimpleShape";
 
-function typeCheck<T>(dict: unknown, type: T): T {
+export function typeCheck<T>(dict: unknown, type: T, message: string = ""): T {
     if (dict === undefined || dict === null) {
-        throw new Error("Invalid json");
+        throw new Error(`[${message}] dict is null`);
     }
     if (typeof dict === "string") {
         try {
             dict = JSON.parse(dict);
         } catch (e) {
-            throw new Error(dict + " is not a valid json");
+            throw new Error(`[${message}] Invalid json string ${dict}`);
         }
     }
     if (dict === null) {
-        throw new Error("Dict is null");
+        throw new Error(`[${message}] Invalid json`);
     }
     if (typeof dict !== "object") {
-        throw new Error("Invalid object");
+        throw new Error(`[${message}] Invalid object`);
     }
     if (typeof type !== "object") {
-        throw new Error("Invalid type");
+        throw new Error(`[${message}] Invalid type: ${type}`);
     }
     for (const key in type) {
         if (!(key in dict)) {
-            throw new Error("Invalid dict: missing " + key);
+            throw new Error(`[${message}] Invalid dict: missing ${key}`);
         }
         // @ts-ignore
         const value: any = dict[key] as any;
@@ -32,133 +36,123 @@ function typeCheck<T>(dict: unknown, type: T): T {
         // @ts-ignore
         const typeValue = typeof type[key];
         if (valueType !== typeValue) {
-            throw new Error("Invalid dict: " + key + " is not " + typeValue);
+            throw new Error(`[${message}] Invalid dict: ${key} is not a ${typeValue}`);
         }
     }
     return dict as T;
 }
 
-async function jsonToDocV1(dict: unknown): Promise<OVODocument | null> {
+export async function jsonToDocV1(dict: unknown): Promise<OVODocument | null> {
     if (dict === undefined || dict === null) {
         throw new Error("Invalid json");
     }
-    if (typeof dict === "string") {
-        try {
-            dict = JSON.parse(dict);
-        } catch (e) {
-            throw new Error(dict + " is not a valid json");
+    const docJsonTemplate: DocumentJson = {
+        header: {
+            version: "",
+            type: "",
+        },
+        doc: {
+            name: "",
+            width: 0,
+            height: 0,
+            thumbnail: "",
+            root: {
+                type: "group",
+                name: "",
+                children: []
+            }
         }
     }
-    if (dict === null) {
-        throw new Error("Dict is null");
-    }
-    if (typeof dict !== "object") {
-        throw new Error("Invalid object");
-    }
-    if (!("header" in dict)) {
-        throw new Error("Invalid dict: missing header");
-    }
-    const header = dict["header"] as unknown;
-    if (typeof header !== "object" || header === null) {
-        throw new Error("Invalid header");
-    }
-    if (!("version" in header)) {
-        throw new Error("Invalid header");
-    }
-    const version = header["version"] as unknown;
-    if (typeof version !== "string") {
-        throw new Error("Version is not a string");
-    }
-    if (version !== Header.version) {
-        throw new Error("Invalid version");
-    }
-    if (!("type" in header)) {
-        throw new Error("Invalid header: missing type");
-    }
-    const type = header["type"] as unknown;
-    if (typeof type !== "string") {
-        throw new Error("Type is not a string");
-    }
-    if (type !== Header.type) {
-        throw new Error("Invalid type");
-    }
-    if (!("thumbnail" in header)) {
-        throw new Error("Invalid header: missing thumbnail");
-    }
-    const thumbnail = header["thumbnail"] as unknown;
-    if (typeof thumbnail !== "string") {
-        throw new Error("Thumbnail is not a string");
-    }
+    try {
+        const docDict = typeCheck<DocumentJson>(dict, docJsonTemplate, "jsonToDocV1");
+        const doc = new OVODocument(docDict.doc.name, docDict.doc.width, docDict.doc.height);
 
-    if (!("doc" in dict)) {
-        throw new Error("Invalid dict: missing doc");
-    }
-    const docDict = dict["doc"] as unknown;
-    if (typeof docDict !== "object" || docDict === null) {
-        throw new Error("Invalid doc");
-    }
-    if (!("name" in docDict)) {
-        throw new Error("Invalid doc: missing name");
-    }
-    const name = docDict["name"] as unknown;
-    if (typeof name !== "string") {
-        throw new Error("Invalid name");
-    }
-    if (!("width" in docDict)) {
-        throw new Error("Invalid doc: missing width");
-    }
-    const width = docDict["width"] as unknown;
-    if (typeof width !== "number") {
-        throw new Error("Invalid width");
-    }
-    if (!("height" in docDict)) {
-        throw new Error("Invalid doc: missing height");
+        doc.rootNode = await jsonToGroupNode(docDict.doc.root);
 
+        return doc;
+    } catch (e) {
+        console.error(e);
+        return null;
     }
-    const height = docDict["height"] as unknown;
-    if (typeof height !== "number") {
-        throw new Error("Invalid height");
-    }
-    if (!("root" in docDict)) {
-        throw new Error("Invalid doc: missing root");
-    }
-    const root = docDict["root"] as unknown;
-    if (typeof root !== "object" || root === null) {
-        throw new Error("Invalid root");
-    }
-
-    const doc = new OVODocument(name, width, height);
-    doc.rootNode = await jsonToGroupNode(root);
-    return doc;
 }
 
-async function jsonToGroupNode(dict: unknown): GroupNode {
-    if (dict === undefined || dict === null) {
-        throw new Error("[jsonToGroupNode] Invalid json");
-    }
-    if (typeof dict !== "object") {
-        throw new Error("[jsonToGroupNode] Invalid object");
-    }
-    if (!("type" in dict)) {
-        throw new Error("[jsonToGroupNode] Invalid dict: missing type");
-    }
-    const type = dict["type"] as unknown;
-    if (typeof type !== "string") {
-        throw new Error("[jsonToGroupNode] Type is not a string");
-    }
-    if (type !== "group") {
-        throw new Error("[jsonToGroupNode] Invalid type");
-    }
-    if (!("name" in dict)) {
-        throw new Error("[jsonToGroupNode] Invalid dict: missing name");
-    }
-    const name = dict["name"] as unknown;
-    if (typeof name !== "string") {
-        throw new Error("[jsonToGroupNode] Name is not a string");
-    }
-    if (!("children" in dict)) {
-        throw new Error("[jsonToGroupNode] Invalid dict: missing children");
-    }
+async function base64ToImage(base64: string): Promise<HTMLImageElement> {
+    const img = new Image();
+    img.src = base64;
+    return new Promise((resolve, reject) => {
+        img.onload = () => {
+            resolve(img);
+        }
+        img.onerror = () => {
+            reject();
+        }
+    });
+}
 
 
+async function jsonToBitmapNode(dict: unknown): Promise<BitmapLayerNode> {
+    const bitmapNodeJsonTemplate: BitmapNodeJson = {
+        type: "bitmap",
+        name: "",
+        offset: [0, 0],
+        width: 0,
+        height: 0,
+        bitmap: ""
+    }
+    const bitmapNodeDict = typeCheck<BitmapNodeJson>(dict, bitmapNodeJsonTemplate, "jsonToBitmapNode");
+    const bitmapNode = new BitmapLayerNode(bitmapNodeDict.width, bitmapNodeDict.height, bitmapNodeDict.name);
+    bitmapNode.offset = bitmapNodeDict.offset;
+    bitmapNode.ctx.drawImage(await base64ToImage(bitmapNodeDict.bitmap), 0, 0, bitmapNodeDict.width, bitmapNodeDict.height);
+    return bitmapNode;
+}
+
+async function jsonToShapeNode(dict: unknown): Promise<ShapeLayerNode> {
+    const shapeNodeJsonTemplate: ShapeNodeJson = {
+        type: "shape",
+        name: "",
+        offset: [0, 0],
+        shapes: []
+    }
+    const shapeNodeDict = typeCheck<ShapeNodeJson>(dict, shapeNodeJsonTemplate, "jsonToShapeNode");
+    const shapeNode = new ShapeLayerNode(shapeNodeDict.name);
+    shapeNode.offset = shapeNodeDict.offset;
+
+    for (let i = 0; i < shapeNodeDict.shapes.length; i++) {
+        const shapeJson = shapeNodeDict.shapes[i];
+        if (shapeJson.type === "text") {
+            const text = new TextShape("", [0, 0], "Arial", 12);
+            text.applyState(shapeJson as any);
+            shapeNode.addShape(text);
+        }
+        if (shapeJson.type === "simple") {
+            const simple = new SimpleShape([0, 0], [0, 0]);
+            simple.applyState(shapeJson as any);
+            shapeNode.addShape(simple)
+        }
+    }
+    return shapeNode;
+}
+
+
+async function jsonToGroupNode(dict: unknown): Promise<GroupNode> {
+    const groupNodeJsonTemplate: GroupNodeJson = {
+        type: "group",
+        name: "",
+        children: []
+    }
+    const groupNodeDict = typeCheck<GroupNodeJson>(dict, groupNodeJsonTemplate, "jsonToGroupNode");
+    const groupNode = new GroupNode(groupNodeDict.name);
+    for (let i = 0; i < groupNodeDict.children.length; i++) {
+        const child = groupNodeDict.children[i];
+        if (child.type === "group") {
+            groupNode.addNode(await jsonToGroupNode(child));
+        } else if (child.type === "bitmap") {
+            groupNode.addNode(await jsonToBitmapNode(child));
+        } else if (child.type === "shape") {
+            groupNode.addNode(await jsonToShapeNode(child));
+        } else {
+            throw new Error("Unknown node type");
+        }
+    }
+    return groupNode;
 }
