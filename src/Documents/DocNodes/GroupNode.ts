@@ -4,12 +4,12 @@ import {Vec2} from "../../submodules/common-ts-utils/Math/Vector";
 export class GroupNode extends DocNode {
     _nodes: DocNode[] = [];
 
-    get children(){
-        return this._nodes;
-    }
-
     constructor(name: string = "New Group", offset: Vec2 = [0, 0]) {
         super(name, offset);
+    }
+
+    get children() {
+        return this._nodes;
     }
 
     addNode(node: DocNode) {

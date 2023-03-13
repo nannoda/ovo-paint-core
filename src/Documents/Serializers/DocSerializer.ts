@@ -1,4 +1,3 @@
-import {ISerializers} from "./ISerializers";
 import {OVODocument} from "../OVODocument";
 
 export abstract class DocSerializer {

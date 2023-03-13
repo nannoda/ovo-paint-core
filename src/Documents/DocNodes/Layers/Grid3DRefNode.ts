@@ -22,6 +22,7 @@ export class Grid3DRefNode extends ReferenceLayerNode {
         let perspectiveMatrix = this.perspective();
         console.log(lookAtMatrix);
         console.log(perspectiveMatrix);
+
         function inverse(m: Mat4): Mat4 {
             let t: Mat4 = [
                 [m[0][0], m[1][0], m[2][0], m[3][0]],
@@ -31,6 +32,7 @@ export class Grid3DRefNode extends ReferenceLayerNode {
             ];
             return t;
         }
+
         function multiply(a: Mat4, b: Mat4): Mat4 {
             let t: Mat4 = [
                 [0, 0, 0, 0],
@@ -47,10 +49,12 @@ export class Grid3DRefNode extends ReferenceLayerNode {
             }
             return t;
         }
+
         let viewMatrix = inverse(lookAtMatrix);
         let viewProjectionMatrix = multiply(perspectiveMatrix, viewMatrix);
         let viewportMatrix = this.viewport();
         let transformMatrix = multiply(viewportMatrix, viewProjectionMatrix);
+
         function transformPoint(m: Mat4, p: Vec3): Vec3 {
             let t: Vec3 = [0, 0, 0];
             for (let i = 0; i < 3; i++) {
@@ -89,8 +93,6 @@ export class Grid3DRefNode extends ReferenceLayerNode {
         this.contentCtx.stroke();
 
         console.log(p1t, p2t, p3t, p4t)
-
-
 
 
     }
@@ -161,7 +163,7 @@ export class Grid3DRefNode extends ReferenceLayerNode {
         return t;
     }
 
-    render(e:DocNodeRenderEvent){
+    render(e: DocNodeRenderEvent) {
         // super.render(e);
         // this.drawGrid3D();
         // e.ctx.clearRect(0, 0, e.canvas.width, e.canvas.height);

@@ -1,9 +1,5 @@
 import {OVODocument} from "../OVODocument";
 import {DocSerializer} from "./DocSerializer";
-import {GroupNode} from "../DocNodes/GroupNode";
-import {BitmapLayerNode} from "../DocNodes/Layers/BitmapLayerNode";
-import {ShapeLayerNode} from "../DocNodes/Layers/ShapeLayer/ShapeLayerNode";
-import {ShapeState} from "../DocNodes/Layers/ShapeLayer/Shape";
 import {docToJsonV1} from "./OvoJsonV1/DocToJsonV1";
 import {jsonToDocV1} from "./OvoJsonV1/DictToDocV1";
 

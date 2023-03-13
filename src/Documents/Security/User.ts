@@ -5,8 +5,6 @@ export interface User {
 }
 
 
-
-
 if (localStorage.getItem("user") === null) {
     let signature = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
     localStorage.setItem("user", JSON.stringify({

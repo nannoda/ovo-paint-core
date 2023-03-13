@@ -1,5 +1,5 @@
 import {OVODocument} from "../../OVODocument";
-import {BitmapNodeJson, DocumentJson, GroupNodeJson, Header, ShapeNodeJson} from "./JsonTypeV1";
+import {BitmapNodeJson, DocumentJson, GroupNodeJson, ShapeNodeJson} from "./JsonTypeV1";
 import {GroupNode} from "../../DocNodes/GroupNode";
 import {BitmapLayerNode} from "../../DocNodes/Layers/BitmapLayerNode";
 import {ShapeLayerNode} from "../../DocNodes/Layers/ShapeLayer/ShapeLayerNode";

@@ -1,6 +1,5 @@
 import {DocNode} from "./Documents/DocNodes/DocNode";
 import {IUndoRedo} from "./Interface/IUndoRedo";
-import {OVODocument} from "./Documents/OVODocument";
 import {Vec2} from "./submodules/common-ts-utils/Math/Vector";
 
 export interface PaintToolEvent<NodeType extends DocNode> {

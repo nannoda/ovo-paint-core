@@ -9,6 +9,10 @@ export class ShapeLayerNode extends DocNode {
 
     private _shapes: Shape[] = [];
 
+    get shapes(): Shape[] {
+        return this._shapes;
+    }
+
     addShape(shape: Shape): void {
         this._shapes.push(shape);
     }
@@ -26,10 +30,6 @@ export class ShapeLayerNode extends DocNode {
             shape.renderTo(e.ctx);
         }
         // e.ctx.drawImage(tmpCanvas, this.offset[0], this.offset[1]);
-    }
-
-    get shapes(): Shape[] {
-        return this._shapes;
     }
 
     // set shapes(shapes: Shape[]) {

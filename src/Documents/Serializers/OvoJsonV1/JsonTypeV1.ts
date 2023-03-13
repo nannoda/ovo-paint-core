@@ -8,7 +8,7 @@ export interface IHeader {
     type: string;
 }
 
-export const Header:IHeader = {
+export const Header: IHeader = {
     version: "1.0",
     type: "OVOJSON",
 }
