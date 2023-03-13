@@ -2,7 +2,6 @@ import {currUser, User} from "./Security/User";
 import {DocNode} from "./DocNodes/DocNode";
 import {GroupNode} from "./DocNodes/GroupNode";
 import {IUndoRedo} from "../Interface/IUndoRedo";
-import {getCheckBoard} from "./BackgroundFills";
 
 type DocumentRenderMode = "export" | "edit";
 
